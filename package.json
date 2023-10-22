@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "bootstrap": "^5.3.2"
+  },
+  "scripts": {
+    "scss:compile": "node-sass Frontend/static/scss/custom.scss Frontend/static/css/custom.css"
+  }
+}
