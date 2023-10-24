@@ -1,15 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+{% block title %}Login{% endblock %}
 
-<body>
-    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iure dolorem debitis id aut voluptates nam eaque
-        obcaecati, veniam autem nobis harum accusamus officia non nisi rerum nihil reiciendis eligendi numquam.</p>
-</body>
+{% block content %}
 
-</html>
+<style>
+    #login_section {
+        background-image: url("{{ url_for('static', filename='images/bg2.png') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+    #login_form{
+        max-width: 500px;
+    }
+    
+</style>
+<div id="login_section" class="container-fluid  d-flex align-items-center" style="min-height: 67vh;">
+    <form class="container bg-primary rounded-5 p-4 d-flex justify-content-start flex-column shadow-lg"
+    id = "login_form"
+        style="min-height: 50vh;" action="/users/signin" method="POST">
+        <h1 class="text-white text-center mb-4" style="font-weight: bold;">SIGN IN</h1>
+        <div class="mb-4" style="border-top: solid white 2px;"></div>
+        <div class="mb-3">
+            <label for="email" class="form-label text-white h5">Email or phone</label>
+            <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelpId"
+                placeholder="abc@mail.com">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label text-white h5">Password</label>
+            <input type="password" class="form-control" name="password" id="password" aria-describedby="emailHelpId"
+                placeholder="********">
+        </div>
+        <button type="submit" class="btn btn-light text-primary fw-bold mt-2 p-2">SIGN IN</button>
+        <div class="text-white mt-2 text-center">You don't have an account? <a class="text-light fw-bold" href="/page/signup">Signup</a></div>
+    </form>
+
+
+</div>
+
+{% endblock %}

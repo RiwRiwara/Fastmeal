@@ -1,17 +1,82 @@
 <style>
-    nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
+    /* Style the dropdown button */
+    .dropdown-toggle {
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
         color: #fff;
-        z-index: 1000;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    /* Style the dropdown content (hidden by default) */
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: #333;
+        /* Background color of the dropdown */
+        min-width: 160px;
+        z-index: 1;
+        border: 1px solid #777;
+    }
+
+    /* Style the dropdown links */
+    .dropdown-item {
+        color: #fff;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    /* Change color of dropdown items on hover */
+    .dropdown-item:hover {
+        background-color: #ffffff;
     }
 </style>
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
 <header>
-    <nav>
-        <div class="container">
+    <nav class="container-fluid bg-primary d-flex align-items-center">
+        <div class="container-fluid mx-5">
+            <div class="d-flex justify-content-between">
+                <div class="d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo">
+                </div>
+                <div class="d-flex flex-row gap-3">
+                    {% if IsUserLoggedIn %}
+                    <div class="nav-item-list">
+                        <a href="/page/menu">MENU</a>
+                    </div>
+                    <div class="nav-item-list">
+                        <a href="/page/cart">CART</a>
+                    </div>
+                    <div class="nav-item-list">
+                        <a href="/page/orders">ORDERS</a>
+                    </div>
+                    <div class="nav-item-list">
+                        <a href="/page/message">MESSAGES</a>
+                    </div>
+
+                    <div class="dropdown nav-item-lis">
+                        <a class=" dropdown-toggle" type="button" id="dropdownMenuButton1"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            PROFILE
+                        </a>
+                        <ul class="dropdown-menu bg-secondary border-0" aria-labelledby="dropdownMenuButton1">
+                            <a class="dropdown-item" href="/page/edit-profile">Edit Profile</a>
+                            <a class="dropdown-item" href="/page/admin">Admin</a>
+                            <a class="dropdown-item" href="users/logout">Logout</a>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <div class="nav-item-list">
+                        <a href="/page/login">LOGIN</a>
+                    </div>
+                    <div class="nav-item-list">
+                        <a href="/page/signup">SIGN UP</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </nav>
 </header>

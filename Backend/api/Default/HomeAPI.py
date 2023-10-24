@@ -1,5 +1,5 @@
 from . import defaultAPI
-from flask import  jsonify, render_template, request
+from flask import  jsonify, render_template, request, session, redirect, url_for
 import json
 from Backend.Constant import Constants
 from Backend.db import db
@@ -21,8 +21,27 @@ def get_data_from_db():
 
 @defaultAPI.route('/')
 def index():
-    return render_template('index.html')
+    if 'IsUserLoggedIn' not in session:
+        session['IsUserLoggedIn'] = False
+
+    if session['IsUserLoggedIn']:
+        return render_template('menu.html', IsUserLoggedIn=session['IsUserLoggedIn'], UserType=session['UserType'])
+
+    return render_template('index.html', IsUserLoggedIn=session['IsUserLoggedIn'], UserType=session.get('UserType', None))
+
+@defaultAPI.route('/view_session')
+def view_session():
+    session_data = dict(session)
+    return jsonify(session_data)
 
 @defaultAPI.route('/page/<page>')
 def page(page):
-    return render_template(page)
+    if 'IsUserLoggedIn' not in session:
+        session['IsUserLoggedIn'] = False
+
+    if not session['IsUserLoggedIn'] and page not in ['login', 'signup']:
+        return redirect(url_for('defaultAPI.index'))
+    if session['IsUserLoggedIn'] and page in ['login', 'signup']:
+        return redirect(url_for('defaultAPI.index'))
+    
+    return render_template(page + '.html', IsUserLoggedIn=session['IsUserLoggedIn'], UserType=session.get('UserType', None))

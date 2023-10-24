@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Menu{% endblock %}
+
+{% block content %}
+
+<style>
+    #menu_section {
+        background-image: url("{{ url_for('static', filename='images/bg1.png') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+</style>
+<div id="menu_section" class="container-fluid  d-flex align-items-center" style="min-height: 67vh;">
+
+
+</div>
+
+{% endblock %}

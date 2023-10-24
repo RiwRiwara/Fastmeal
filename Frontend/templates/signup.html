@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}SIGN UP{% endblock %}
+
+{% block content %}
+
+<style>
+    #login_section {
+        background-image: url("{{ url_for('static', filename='images/bg2.png') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+    #signup_form{
+        max-width: 500px;
+    }
+    
+</style>
+
+<script>
+    function validateForm() {
+        var email = document.forms["signup_form"]["email"].value;
+        var phone = document.forms["signup_form"]["phone"].value;
+        var name = document.forms["signup_form"]["name"].value;
+        var password = document.forms["signup_form"]["password"].value;
+        var rePassword = document.forms["signup_form"]["re_password"].value;
+
+        if (email === "" || phone === "" || name === "" || password === "" || rePassword === "") {
+            alert("All fields must be filled out");
+            return false;
+        }
+
+        if (password !== rePassword) {
+            alert("Password and Confirm Password must match");
+            return false;
+        }
+    }
+</script>
+
+<div id="login_section" class="container-fluid  d-flex align-items-center" style="min-height: 90vh;">
+    <form class="container bg-primary rounded-5 p-4 d-flex justify-content-start flex-column shadow-lg"
+        id="signup_form"
+        style="min-height: 50vh;" action="/users/signup" method="POST" onsubmit="return validateForm()">
+        <h1 class="text-white text-center mb-4" style="font-weight: bold;">SIGN UP</h1>
+        <div class="mb-4" style="border-top: solid white 2px;"></div>
+        <div class="mb-3">
+            <label for="email" class="form-label text-white h5">Email</label>
+            <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelpId"
+                placeholder="abc@mail.com">
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label text-white h5">Phone</label>
+            <input type="text" class="form-control" name="phone" id="phone" aria-describedby="phoneHelpId"
+                placeholder="08X-XX">
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label text-white h5">Name</label>
+            <input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelpId"
+                placeholder="John Doe">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label text-white h5">Password</label>
+            <input type="password" class="form-control" name="password" id="password" aria-describedby="passwordHelpId">
+        </div>
+        <div class="mb-3">
+            <label for="re_password" class="form-label text-white h5">Confirm Password</label>
+            <input type="password" class="form-control" name="re_password" id="re_password" aria-describedby="re_passwordHelpId">
+        </div>
+
+        <button type="submit" class="btn btn-light text-primary fw-bold mt-2 p-2">SIGN UP</button>
+        <div class="text-white mt-2 text-center">Already have an account? <a class="text-light fw-bold" href="/page/login">Sign In</a></div>
+    </form>
+</div>
+
+{% endblock %}
