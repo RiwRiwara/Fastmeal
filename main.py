@@ -17,4 +17,5 @@ app.register_blueprint(userAPI, url_prefix='/users')
 
 
 if __name__ == '__main__':
-    app.run(host=Constants["HOST"], port=Constants["PORT"], debug=True)
+    app.run(debug=True)
+    # app.run(host=Constants["HOST"], port=Constants["PORT"], debug=True)

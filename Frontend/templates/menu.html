@@ -18,11 +18,19 @@
         top: 90px;
 
     }
+    /* phone */
+    @media (max-width: 768px) {
+        .filter_container {
+            position: relative;
+            top: 0px;
+        }
+    }
+    
 </style>
 <div id="menu_section" class="container-fluid" style="min-height: 67vh;">
     <div class="container">
-        <div class="row p-3">
-            <div class="col-3 main_container filter_container p-3" style="max-height: 50vh;">
+        <div class="row p-2 gap-3">
+            <div class="col-12 col-md-3 main_container filter_container p-3" style="max-height: 50vh;">
                 <div class="mb-3">
                     <label for="search_food" class="form-label">Search meal</label>
                     <input type="text" class="form-control" name="search_food" id="search_food"
@@ -31,10 +39,10 @@
                 </div>
 
             </div>
-            <div class="col-9 row" style="min-height: 50vh;padding-left: 3rem;">
+            <div class="col-12 col-md-9 row" style="min-height: 50vh">
                 {% for item in pageData.data %}
                 {% set food_data = item %}
-                <div class="mb-3 col-12">
+                <div class="mb-3 col-12 ">
                     {% include "partials/food_card.html" %}
                 </div>
                 {% endfor %}
