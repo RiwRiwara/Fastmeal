@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{{pageData.title}}{% endblock %}
+
+{% block content %}
+<div class="print-content">
+    <style>
+        #cart_section {
+            background-image: url("{{ url_for('static', filename='images/bg2.png') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+    <div id="cart_section" class="container-fluid p-4" style="min-height: 76vh;">
+        <div class="container ">
+            {% if pageData.isOrderDetail %}
+            <h2 class="text-primary fw-bold main_container p-2 text-center">
+                Order #{{pageData.order_id}}
+            </h2>
+            <div class="main_container p-3 my-3 fs-4">
+                <p><strong class="text-primary fw-bold">Order ID:</strong> {{ pageData.order_id }}</p>
+                <p><strong class="text-primary fw-bold">Type:</strong> {{ pageData.data.type }}</p>
+                <p><strong class="text-primary fw-bold">Address:</strong> {{ pageData.data.address }}</p>
+                <p><strong class="text-primary fw-bold">Table:</strong> {{ pageData.data.table }}</p>
+                <p><strong class="text-primary fw-bold">Total:</strong> {{ pageData.data.total }}</p>
+                <p><strong class="text-primary fw-bold">Status:</strong> {{ pageData.data.status }}</p>
+                <p><strong class="text-primary fw-bold">Created At:</strong> {{ pageData.data.created_at }}</p>
+                <p><strong class="text-primary fw-bold">Updated At:</strong> {{ pageData.data.updated_at }}</p>
+                <button type="button" class="btn btn-primary" onclick="printReceipt()">Print receipt</button>
+            </div>
+            <div class="row p-3">
+
+                {% for item in pageData.data.food_data %}
+                {% set food_data = item %}
+                <div class="mb-3 col-12">
+                    {% include "partials/food_card.html" %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <h2 class="text-primary fw-bold main_container p-2 text-center">
+                Your order
+            </h2>
+            <div class="table-responsive main_container p-3">
+                <table class="table table-primary">
+                    <thead>
+                        <tr>
+                            <th scope="col">ORDER ID</th>
+                            <th scope="col">TOTAL</th>
+                            <th scope="col">TYPE</th>
+                            <th scope="col">TABLE</th>
+                            <th scope="col">ADDRESS</th>
+                            <th scope="col">STATUS</th>
+                            <th scope="col">DATETIME</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pageData.data %}
+                        <tr>
+                            <td><a href="/page/orders?id={{item.id}}" class="text-primary fw-bold">#
+                                    {{ item.id }}
+                                </a></td>
+                            <td>{{ item.total }}</td>
+                            <td>{{ item.type }}</td>
+                            <td>{{ item.table }}</td>
+                            <td>{{ item.address }}</td>
+                            <td>{{ item.status }}</td>
+                            <td>{{ item.updated_at }}</td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+            {% endif %}
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}{{pageData.title}}{% endblock %}
+
+{% block content %}
+<style>
+    #menu_section {
+        background-image: url("{{ url_for('static', filename='images/bg1.png') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+</style>
+<div id="menu_section" class="container-fluid p-3" style="min-height: 67vh;">
+    <div class="container main_container p-3" style="min-height: 60vh;">
+        <h2 class="text-primary fw-bold">ADMIN PAGE</h2>
+        <hr>
+        <div class="btn-group" role="group" aria-label="Button Group" data-bs-toggle="buttons" id="btnmenuf">
+            <label class="btn btn-primary active">
+                <input type="radio" name="options" id="createFood" autocomplete="off" checked>Create Food
+            </label>
+            <label class="btn btn-secondary">
+                <input type="radio" name="options" id="updateFood" autocomplete="off">Update Food
+            </label>
+            <label class="btn btn-primary">
+                <input type="radio" name="options" id="deleteFood" autocomplete="off">Delete Food
+            </label>
+            <label class="btn btn-primary">
+                <a id="Summary" onclick="summary()">Summary
+            </label>
+        </div>
+
+        <hr>
+        <!-- manage food -->
+
+        <div id="food_panel">
+            <h4 class="text-primary fw-bold" id="food_title">CREATE FOOD</h4>
+
+            <div id="select_food" style="display: none;">
+                <div class="dropdown open mb-3">
+                    <button class="btn btn-primary text-primary dropdown-toggle" type="button" id="triggerId"
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        style="background-color: white;">
+                        Select Food
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="triggerId">
+                        {% for item in pageData.data%}
+                        <button class="dropdown-item text-white btn btn-secondary" onclick="selectFoods('{{item.id}}')">
+                            #{{item.id}} -
+                            {{item.name}}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="food_name" class="form-label">Food name</label>
+                <input type="text" class="form-control" name="" id="food_name" placeholder="enter foodname">
+            </div>
+            <div id="isDeleted">
+                <div class="mb-3">
+                    <label for="food_desc" class="form-label">Food Description</label>
+                    <input type="text" class="form-control" name="" id="food_desc" placeholder="enter food description">
+                </div>
+                <div class="mb-3">
+                    <label for="food_type" class="form-label">Food Type</label>
+                    <input type="text" class="form-control" name="" id="food_type" placeholder="enter food Type">
+                </div>
+                <div class="mb-3">
+                    <label for="food_imgs" class="form-label">Food Image url</label>
+                    <input type="text" class="form-control" name="" id="food_imgs" placeholder="www//..">
+                </div>
+                <div class="mb-3">
+                    <label for="food_price" class="form-label">Food Price</label>
+                    <input type="number" class="form-control" name="" id="food_price" placeholder="200">
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="createOrUpdateFood()" id="createBtn">Create Food</button>
+        <button type="button" class="btn btn-primary" onclick="updateFood()" id="updateBtn"
+            style="display: none;">Update Food</button>
+        <button type="button" class="btn btn-primary" onclick="deleteFood()" id="deleteBtn"
+            style="display: none;">Delete Food</button>
+
+        <hr>
+
+
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.0/html2pdf.bundle.min.js"></script>
+<script>
+    var food_selected_id = null;
+    function selectFoods(id) {
+        food_selected_id = id;
+        fetch('/food?id=' + id)
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.error);
+                    });
+                }
+            })
+            .then(data => {
+                data = data[0];
+                document.getElementById("food_name").value = data.name;
+                document.getElementById("food_desc").value = data.description;
+                document.getElementById("food_type").value = data.type;
+                document.getElementById("food_imgs").value = data.image;
+                document.getElementById("food_price").value = data.price;
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+
+    function MenuToggle() {
+        var createFood = document.getElementById("createFood");
+        var updateFood = document.getElementById("updateFood");
+        var deleteFood = document.getElementById("deleteFood");
+        var title = document.getElementById("food_title");
+        if (createFood.checked) {
+            title.innerHTML = "CREATE FOOD";
+            document.getElementById("select_food").style.display = "none";
+            document.getElementById("isDeleted").style.display = "block";
+            document.getElementById("createBtn").style.display = "block";
+            document.getElementById("updateBtn").style.display = "none";
+            document.getElementById("deleteBtn").style.display = "none";
+
+
+        } else if (updateFood.checked) {
+            title.innerHTML = "UPDATE FOOD";
+            document.getElementById("select_food").style.display = "block";
+            document.getElementById("isDeleted").style.display = "block";
+            document.getElementById("createBtn").style.display = "none";
+            document.getElementById("updateBtn").style.display = "block";
+            document.getElementById("deleteBtn").style.display = "none";
+
+        } else if (deleteFood.checked) {
+            title.innerHTML = "DELETE FOOD";
+            document.getElementById("select_food").style.display = "block";
+            document.getElementById("isDeleted").style.display = "none";
+            document.getElementById("createBtn").style.display = "none";
+            document.getElementById("updateBtn").style.display = "none";
+            document.getElementById("deleteBtn").style.display = "block";
+
+
+        }
+    }
+
+    document.getElementById("btnmenuf").addEventListener("change", MenuToggle);
+
+    function updateFood() {
+        createOrUpdateFood(food_selected_id);
+    }
+    function deleteFood() {
+        fetch('/food/delete/' + food_selected_id, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.status === 201) {
+                    return response.json();
+                } else if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.error);
+                    });
+                }
+            })
+            .then(data => {
+                console.log(data.message);
+                alert("delete success");
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+
+        window.location.reload();
+    }
+    function createOrUpdateFood(id = null) {
+
+        const foodData = {
+            "description": document.getElementById("food_desc").value,
+            "image": document.getElementById("food_imgs").value,
+            "name": document.getElementById("food_name").value,
+            "price": document.getElementById("food_price").value + " THB",
+            "price_level": "1",
+            "type": document.getElementById("food_type").value,
+        };
+
+        if (id) {
+            foodData.id = id;
+        }
+
+        fetch('/food/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(foodData)
+        })
+            .then(response => {
+                if (response.status === 201) {
+                    return response.json();
+                } else if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.error);
+                    });
+                }
+            })
+            .then(data => {
+                console.log(data.message);
+                alert("success");
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+
+        window.location.reload();
+    }
+
+
+    async function summary() {
+        window.location.href = "/page/summary";
+
+    }
+
+
+
+
+</script>
+{% endblock %}

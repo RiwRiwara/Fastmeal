@@ -1,0 +1,112 @@
+<style>
+    .food_card {
+        border-radius: 15px;
+        border: 2px solid #cb4820;
+        background: rgba(255, 226, 210, 0.90);
+    }
+
+    .food_card img {
+        width: 200px;
+        height: 200px;
+        border-radius: 10px;
+    }
+</style>
+
+<div class="row p-3 d-flex align-content-center food_card" id="{{food_data.id}}">
+    <div class="col-4 d-flex align-content-center justify-content-center">
+        {% if food_data.image %}
+        <img src="{{food_data.image}}" alt="foodcard" class="food_card">
+        {% else %}
+        <img src="/static/images?name=food2.png" alt="foodcard" class="food_card">
+        {% endif %}
+
+
+
+
+    </div>
+    <div class="col-8 ">
+        <div>
+            <div class="h5 fw-bolder text-primary">{{ food_data.name }}</div>
+            <div class="fw-bold h5 fst-italic text-muted">{{ food_data.price }}</div>
+            <div class="text-muted">{{ food_data.description }}</div>
+        </div>
+
+    </div>
+    {% if not pageData.isOrderDetail %}
+
+    <div class="d-flex justify-content-end mt-2">
+        <div class="mx-4">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                {% if not isCart %}
+                <button type="button" class="btn btn-primary" id="de{{food_data.id}}"
+                    onclick="updateQuantity('{{food_data.id}}', 'decrease')">-</button>
+
+                <div class="btn btn-secondary" id="va{{food_data.id}}">1</div>
+
+                <button type="button" class="btn btn-primary" id="in{{food_data.id}}"
+                    onclick="updateQuantity('{{food_data.id}}', 'increase')">+</button>
+                {% else %}
+
+                <div class="btn btn-primary fw-bold fs-5 " id="va{{food_data.id}}">{{ food_data.price }} x
+                    {{food_data.quantity}} =
+                    {{ food_data.total_price }} THB
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+        <div>
+            {% if not isCart %}
+
+            <button class="btn btn-primary" id="add{{food_data.id}}" onclick='addCart("{{food_data.id}}")'>Add
+                to
+                cart</button>
+            {% endif %}
+
+        </div>
+
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function updateQuantity(id, action) {
+        const quantityElement = document.getElementById('va' + id);
+        let quantity = parseInt(quantityElement.textContent);
+
+        if (action === 'increase' && quantity < 10) {
+            quantity++; // Increase the quantity
+        } else if (action === 'decrease' && quantity > 1) {
+            quantity--; // Decrease the quantity
+        }
+
+        quantityElement.textContent = quantity;
+    }
+    async function addCart(id) {
+        const quantityElement = document.getElementById('va' + id);
+        let quantity = parseInt(quantityElement.textContent);
+        try {
+            const response = await fetch('/food/add_to_cart', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: id,
+                    quantity: quantity
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            console.log(data);
+            alert(data.message);
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+
+        quantityElement.textContent = 1;
+    }
+
+
+</script>

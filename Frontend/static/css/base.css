@@ -8,3 +8,9 @@
 main{
   margin-top: 80px;
 }
+
+.main_container {
+  border-radius: 15px;
+  border: 2px solid #cb4820;
+  background: rgba(255, 226, 210, 0.90);
+}

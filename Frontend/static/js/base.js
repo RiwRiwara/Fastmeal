@@ -5,7 +5,7 @@ async function getSession() {
             throw new Error(`Request failed with status: ${response.status}`);
         }
         const data = await response.json();
-        return data; 
+        return data;
     } catch (error) {
         console.error('Error:', error);
         return null;
@@ -19,4 +19,9 @@ async function JoinNow() {
     } catch (error) {
         console.error('Error:', error);
     }
+}
+
+
+function printReceipt() {
+    print();
 }

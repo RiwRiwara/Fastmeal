@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}{{pageData.title}}{% endblock %}
+
+
+{% block content %}
+<style>
+    #cart_section {
+        background-image: url("{{ url_for('static', filename='images/bg3.png') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .filter_container_cart {
+        position: sticky;
+        top: 90px;
+
+    }
+</style>
+<div id="cart_section" class="container-fluid" style="min-height: 76vh;">
+    <div class="container">
+        <div class="row p-3">
+            <div class="col-9 d-flex flex-column" style="padding-left: 3rem;">
+                {% for item in pageData.data %}
+                {% set food_data = item %}
+                {% set isCart = pageData.isCart %}
+                <div class="mb-3">
+                    {% include "partials/food_card.html" %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-3  ">
+                <div class="filter_container_cart">
+                    <div class="mb-3 main_container p-3 " style="min-height: 50vh;">
+
+                        <h4 class="text-primary fw-bold">EAT IN?</h4>
+                        <div class="btn-group" data-toggle="buttons" onchange="toggleBtn()">
+                            <label class="btn btn-primary active">
+                                <input type="radio" name="options" id="option1" autocomplete="off" checked> Restaurant
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="options" id="option2" autocomplete="off"> Home
+                            </label>
+                        </div>
+
+
+                        <div id="restaurantInput" class="my-2" style="display: block">
+                            <label for="tableNumber">Table Number:</label>
+                            <input type="number" class="form-control" type="text" id="tableNumber">
+                        </div>
+
+                        <div id="homeInput" class="my-2" style="display: none">
+                            <label for="address">Address:</label>
+                            <textarea rows="3" class="form-control" type="text" id="address"
+                                disabled>{{pageData.address}}</textarea>
+                        </div>
+                    </div>
+                    <div class="main_container p-3" style="min-height: 30vh;">
+                        <div class="text-center">
+                            <h5 class="text-primary fw-bold">SUMMARY</h5>
+                            <hr>
+                            <h6 class="text-primary fw-medium">Services : 10.00 THB</h6>
+                            <h5 class="text-primary fw-bold">TOTAL</h5>
+                            <h4 class="p-2 bg-secondary text-light fw-bold rounded-3" id="total"> {{pageData.total +
+                                10}} ฿</h4>
+                            <button type="button" class="btn btn-primary fw-bold"
+                                onclick="checkedOut('{{pageData.email}}', '{{pageData.foodsID}}')">CHECK OUT@</button>
+                            <button type="button" class="btn btn-danger fw-bold" onclick="cancelCart()">CANCEL</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleBtn() {
+        var res = document.getElementById("option1");
+        var home = document.getElementById("option2");
+        if (res.checked) {
+            document.getElementById("restaurantInput").style.display = "block";
+            document.getElementById("homeInput").style.display = "none";
+        } else {
+            document.getElementById("restaurantInput").style.display = "none";
+            document.getElementById("homeInput").style.display = "block";
+        }
+    }
+
+    async function checkedOut(email, foods) {
+        total = document.getElementById("total").innerHTML.split(" ")[1];
+        order_data = {
+            "email": email,
+            "food_data": foods,
+            "type": document.getElementById("option1").checked ? "restaurant" : "home",
+            "address": document.getElementById("address").value,
+            "table": document.getElementById("tableNumber").value,
+            "total": total
+        }
+        try {
+            const response = await fetch('/order/create', {
+                method: 'POST',
+                body: JSON.stringify({
+                    order_data
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            console.log(data);
+            alert(data[0].message);
+            window.location.href = "/page/orders";
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function cancelCart() {
+        var userConfirmed = confirm("Do you want to proceed?");
+
+        if (userConfirmed) {
+            try {
+                const response = await fetch('/food/cancel_cart', {
+                    method: 'POST',
+                });
+                const data = await response.json();
+                console.log(data);
+                alert(data.message);
+                window.location.href = "/page/menu";
+            }
+            catch (error) {
+                console.log(error);
+            }
+        } else {
+        }
+
+
+    }
+
+</script>
+{% endblock %}

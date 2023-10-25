@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{pageData.title}}{% endblock %}
+
+{% block content %}
+<style>
+    #cart_section {
+        background-image: url("{{ url_for('static', filename='images/bg3.png') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+</style>
+<div id="cart_section" class="container-fluid p-4" style="min-height: 76vh;">
+    <div class="container ">
+        <h2 class="text-primary fw-bold main_container p-2 mb-3 text-center">
+            User Message
+        </h2>
+        <div class=" p-3" style="min-height: 70vh;">
+            <div class="table-responsive main_container p-3">
+                <table class="table table-primary">
+                    <thead>
+                        <tr>
+                            <th scope="col">ORDER ID</th>
+                            <th scope="col">USER EMAIL</th>
+                            <th scope="col">TOTAL</th>
+                            <th scope="col">TYPE</th>
+                            <th scope="col">TABLE</th>
+                            <th scope="col">ADDRESS</th>
+                            <th scope="col">STATUS</th>
+                            <th scope="col">DATETIME</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pageData.data %}
+                        <tr>
+                            <td><a href="/page/orders?id={{item.id}}" class="text-primary fw-bold">#
+                                    {{ item.id }}
+                                </a></td>
+                            <td>{{ item.email }}</td>
+                            <td>{{ item.total }}</td>
+                            <td>{{ item.type }}</td>
+                            <td>{{ item.table }}</td>
+                            <td>{{ item.address }}</td>
+                            {% if item.status == 'waiting' %}
+                                <td class="text-primary fw-bold">{{ item.status }}</td>
+                            {% else %}
+                                {% if item.status == 'confirmed' %}
+                                    <td class="text-success fw-bold">{{ item.status }}</td>
+                                {% else %}
+                                    <td class="text-danger fw-bold">{{ item.status }}</td>
+                                {% endif %}
+                            {% endif %}
+                            <td>{{ item.updated_at }}</td>
+
+                            {% if item.status == 'waiting' %}
+                                <td><a onclick="updateOrder('1', '{{item.id}}')"><i
+                                            class="fs-5 fw-bold bi bi-check-circle btn text-success"></i></a></td>
+                                <td><a onclick="updateOrder('0', '{{item.id}}')"><i
+                                            class="fs-5 fw-bold bi bi-x-circle btn text-danger"></i></a></td>
+    
+                            {% endif %}
+
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function updateOrder(action, id) {
+            order_data = {
+                "id": id,
+            }
+            if (action == '1') {
+                order_data['status'] = 'confirmed';
+            } else {
+                order_data['status'] = 'cancel';
+            }
+            try {
+                const response = await fetch('/order/create', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        order_data
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                console.log(data);
+                alert(data[0].message);
+                window.location.href = "/page/message";
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+    </script>
+    {% endblock %}

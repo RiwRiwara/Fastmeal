@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{pageData.title}}{% endblock %}
+
+{% block content %}
+<style>
+  #cart_section {
+    background-image: url("{{ url_for('static', filename='images/bg4.png') }}");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  #profile {
+    max-width: 500px;
+    min-width: 300px;
+  }
+
+  .form-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: rgb(172, 87, 12);
+  }
+</style>
+<div id="cart_section" class="container-fluid p-4" style="min-height: 80vh;">
+  <div class="container main_container p-3" style="min-height: 30rem;" id="profile">
+    <h2 class="fw-bold text-primary text-center">MY PROFILE</h2>
+    <hr class="my-2">
+    <div class="mb-3">
+      <label for="" class="form-label">Email</label>
+      <input type="text" class="form-control disabled bg-secondary" style="pointer-events: none;"
+        value="{{pageData.data.email}}">
+    </div>
+    <div class="mb-3">
+      <label for="" class="form-label">Name</label>
+      <input type="text" class="form-control" name="name" id="name" placeholder="enter your name"
+        value="{{pageData.data.name}}">
+    </div>
+    <div class="mb-3">
+      <label for="phone" class="form-label">Phone</label>
+      <input type="text" class="form-control" name="phone" id="phone" placeholder="enter your phone"
+        value="{{pageData.data.phone}}">
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" name="password" id="password" placeholder="enter your password"
+        value="{{pageData.data.password}}">
+    </div>
+    <div class="mb-3">
+      <label for="repassword" class="form-label">Confirm Password</label>
+      <input type="password" class="form-control" name="repassword" id="repassword"
+        placeholder="enter your confirm password">
+    </div>
+    <div class="mb-3">
+      <label for="address" class="form-label">Address</label>
+      <textarea rows="3" type="text" class="form-control" name="address" id="address"
+        placeholder="enter your address">{{pageData.data.address}}</textarea>
+    </div>
+    <button type="button" class="btn btn-primary w-100" onclick="SaveData()">Save</button>
+
+    <div>
+    </div>
+  </div>
+
+  <script>
+    function SaveData() {
+      // Check password
+      if (document.getElementById("password").value !== document.getElementById("repassword").value) {
+        alert("Password and Confirm Password must match");
+        return false;
+      }
+
+      var userData = {
+        "name": document.getElementById("name").value,
+        "phone": document.getElementById("phone").value,
+        "password": document.getElementById("password").value,
+        "address": document.getElementById("address").value
+      }
+      console.log(userData);
+
+      // save data.
+      fetch('/users/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          alert(data.message);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert(error);
+        });
+
+    }
+  </script>
+  {% endblock %}

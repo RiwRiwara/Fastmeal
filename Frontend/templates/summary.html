@@ -1,0 +1,104 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/custom.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="icon" href="{{ url_for('static', filename='images/icon.png') }}" type="image/png">
+
+
+<div class="p-3">
+    <div class="container main_container p-3" style="min-height: 80vh;">
+        <h1 class="fs-1 text-primary fw-bold text-center">SUMMARY</h1>
+        <hr>
+
+        <div class="container main_container p-3 mt-4" >
+            <p class="fs-3  text-primary fw-bold ">ORDER SUMMARY</p>
+            <div class="row">
+                <div class="col-6">
+                    <p class="fs-5 text-warning fw-bold">Wating order :</p>
+                    <p class="fs-5 text-success fw-bold">Comfirmed order :</p>
+                    <p class="fs-5 text-danger fw-bold">Canelled order :</p>
+                    <p class="fs-5 text-dark fw-bold">Total order :</p>
+
+                </div>
+                <div class="col-6">
+                    <p class="fs-5 text-dark fw-bold" id="wating">0</p>
+                    <p class="fs-5 text-dark fw-bold" id="confirm">0</p>
+                    <p class="fs-5 text-dark fw-bold" id="cancel">0</p>
+                    <p class="fs-5 text-dark fw-bold" id="total">0</p>
+                </div>
+            </div>
+            <hr>
+            <h1 class="text-primary">INCOME : <span id="income">0</span> BAHT</h1>
+        </div>
+
+        <div class="container main_container p-3 " style="margin-top: 2rem;">
+            <p class="fs-3  text-primary fw-bold ">SYSTEMT SUMMARY</p>
+            <div class="row">
+                <div class="col-6">
+                    <p class="fs-5 text-dark fw-bold">Number of  Users :</p>
+                    <p class="fs-5 text-dark fw-bold">Number of Foods :</p>
+
+                </div>
+                <div class="col-6">
+                    <p class="fs-5 text-dark fw-bold" id="nuser">0</p>
+                    <p class="fs-5 text-dark fw-bold" id="nfood">0</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous"></script>
+
+<script>
+
+    async function fetchSummaryData() {
+        try {
+            const response = await fetch('/summary');
+            if (response.ok) {
+                return await response.json();
+            } else {
+                throw new Error('Failed to fetch data');
+            }
+        } catch (error) {
+            console.error('Error fetching summary data:', error);
+            return null;
+        }
+    }
+
+    fetchSummaryData().then(data => {
+        if (data) {
+            console.log(data);
+
+            var user_collection = {}
+            var food_collection = {}
+            data.collection_data.forEach(element => {
+                if (element.collection_name == "users") {
+                    user_collection = element
+                }
+                if (element.collection_name == "food_items") {
+                    food_collection = element
+                }
+                
+            });
+            document.getElementById("wating").innerHTML = data.summary.waiting
+            document.getElementById("confirm").innerHTML = data.summary.confirmed
+            document.getElementById("cancel").innerHTML = data.summary.cancelled
+            document.getElementById("total").innerHTML = data.summary.total
+            document.getElementById("income").innerHTML = data.summary.income
+            document.getElementById("nuser").innerHTML = user_collection.document_count
+            document.getElementById("nfood").innerHTML = food_collection.document_count
+
+            print(data)
+        }
+    });
+
+</script>
